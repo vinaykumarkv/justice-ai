@@ -1,121 +1,79 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState } from "react"
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [defendant, setDefendant] = useState("")
+  const [charge, setCharge] = useState("")
+  const [priorOffences, setPriorOffences] = useState("")
+  const caseText = ` Defendant: ${defendant}.\n Charge: ${charge}.\n Prior offences: ${priorOffences}`
+  const [briefing, setBriefing] = useState("")
+  const [loading, setLoading] = useState(false)
+
+  async function getBriefing() {
+    setLoading(true)
+    setBriefing("")
+
+    const response = await fetch("http://localhost:5000/brief", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ case_text: caseText })
+    })
+
+    const data = await response.json()
+    setBriefing(data.briefing)
+    setLoading(false)
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div style={{ maxWidth: "700px", margin: "40px auto", padding: "0 20px", fontFamily: "sans-serif" }}>
+      <h1>Justice AI — Case Briefing</h1>
+      <h2>Defendant:</h2>
+      <input
+        type="text"
+        style={{ width: "100%", padding: "8px", fontSize: "14px" }}
+        placeholder="Enter defendant name..."
+        value={defendant}
+        onChange={(e) => setDefendant(e.target.value)}
+      />
+      <h2>Charge:</h2>
+      <input
+        type="text"
+        style={{ width: "100%", padding: "8px", fontSize: "14px" }}
+        placeholder="Enter charge details..."
+        value={charge}
+        onChange={(e) => setCharge(e.target.value)}
+      />
+      <h2>Prior Offences:</h2>
+        
+      <input
+        type="text"
+        style={{ width: "100%", padding: "8px", fontSize: "14px" }}
+        placeholder="Enter prior offences..."
+        value={priorOffences}
+        onChange={(e) => setPriorOffences(e.target.value)}
+      />
+      <h2>Case Text:</h2>
+      <textarea
+        rows={5}
+        style={{ width: "100%", padding: "8px", fontSize: "14px", marginTop: "8px" }}
+        placeholder="Case text will appear here..."  
+        value={caseText}
+        readOnly
+        style={{ background: "#f9f9f9", color: "#333", border: "1px solid #ccc", borderRadius: "4px" }}
+      />
 
-      <div className="ticks"></div>
+      <button
+        onClick={getBriefing}
+        style={{ padding: "10px 24px", background: "#1a56db", color: "white", border: "none", cursor: "pointer", marginTop: "8px" }}
+      >
+        {loading ? "Thinking..." : "Generate Briefing"}
+      </button>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      {briefing && (
+        <div style={{ marginTop: "24px", background: "#f4f4f4", padding: "16px", whiteSpace: "pre-wrap" }}>
+          {briefing}
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      )}
+    </div>
   )
 }
 

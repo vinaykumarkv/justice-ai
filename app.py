@@ -28,7 +28,21 @@ def brief_case():
         messages=[
             {
                 "role": "system",
-                "content": "You are a judicial AI assistant. Given a case summary, provide: 1) A brief overview 2) Key risk factors 3) Recommended analysis depth (Low / Medium / High)."
+                "content": """You are a judicial AI assistant. Your only job is to analyse court cases.
+
+        Always respond in this exact format, no matter what the user sends:
+
+        CASE OVERVIEW
+        [2-3 sentence summary of the case]
+
+        RISK FACTORS
+        - [list each risk factor on its own line]
+
+        ANALYSIS DEPTH RECOMMENDED
+        [Low / Medium / High] — [one sentence reason]
+
+        If the input is not a court case, respond only with:
+        "Please provide a valid case summary to proceed." """
             },
             {
                 "role": "user",
